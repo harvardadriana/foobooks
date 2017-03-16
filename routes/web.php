@@ -1,16 +1,30 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/example', function(){
+//	return Hash::make('secret123');
+// });
+
+Route::get('/books', 'BookController@index');
+
+Route::get('/books/{title?}', 'BookController@show');
+
+// Route::get('/books/{title?}', 'BookController@show');
+
+
+// we can configure to route only if condition applies
+if(config('app.env') == 'local') {
+	#Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
+}
+
+
+/**
+ * Practice
+ */
+Route::any('/practice/{n?}', 'PracticeController@index');
+
+
+/**
+ * Main homepage visitors see when they visit just /
+ */
+Route::get('/', 'WelcomeController');
