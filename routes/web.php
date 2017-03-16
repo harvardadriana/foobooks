@@ -1,6 +1,12 @@
 <?php
 
 
+/**
+ * Practice - log viewer
+ */
+Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
+
+
 // Route::get('/example', function(){
 //	return Hash::make('secret123');
 // });
