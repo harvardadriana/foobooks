@@ -9,6 +9,16 @@ use App\Book;
 
 class PracticeController extends Controller
 {
+    public function practice18() {
+
+        $books = Book::all();
+
+        foreach($books as $book) {
+
+            dump($book->title);
+
+        }
+    }
 
     /**
     *  delete method - delete

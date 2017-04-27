@@ -12,6 +12,10 @@
 
 </head>
 <body>
+    
+    @if(Session::get('message') != null)
+        <div class='message'>{{ Session::get('message') }} </div>
+    @endif
 
     <header>
         <img

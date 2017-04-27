@@ -4,16 +4,27 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 # use Hash;
+use App\Book;
+use Session;
 
 class BookController extends Controller
 {
-    /*
-     * Get 
-     * /books
-     */
-    public function index(){
-    	return 'you want to view all books';
-    	# return \Hash::make('secret123');
+
+    /**
+    * GET
+    * /books
+    */
+    public function index() {
+
+        #$newBooks = $books->sortByDesc('created_at')->take(3); # Query existing Collection
+
+        $books = Book::orderBy('title')->get(); # Query DB
+        $newBooks = Book::orderBy('created_at', 'descending')->limit(3)->get(); # Query DB
+
+        return view('books.index')->with([
+            'books' => $books,
+            'newBooks' => $newBooks,
+        ]);
 	}
 
     /*
@@ -102,21 +113,109 @@ class BookController extends Controller
         # Validate the request data
         $this->validate($request, [
             'title' => 'required|min:3',
+            'published' => 'required|numeric',
+            'cover' => 'required|url',
+            'purchase_link' => 'required|url',
         ]);
 
-        # Note: If validation fails, it will redirect the visitor back to the form page
-        # and none of the code that follows will execute.
+        $book = new Book();
+        $book->title = $request->title;
+        $book->published = $request->published;
+        $book->cover = $request->cover;
+        $book->purchase_link = $request->purchase_link;
+        $book->save();
 
-        $title = $request->input('title');
-
-        # 
-        #
-        # [...Code will eventually go here to actually save this book to a database...]
-        #
-        #
+        Session::flash('message', 'The book '.$request->title.' was added.');
 
         # Redirect the user to the page to view the book
-        return redirect('/books/'.$title);
+        return redirect('/books/');
+    }
+
+    /**
+    * POST
+    * /books/edit/{id}
+    * 
+    */
+    public function edit($id) {
+
+        $book = Book::find($id);
+
+        if(is_null($book)) {
+            Session::flash('message', 'Book not found');
+            return redirect('/books');
+        }
+
+        return view('books.edit')->with([
+            'id' => $id,
+            'book' => $book,
+        ]);
+
+    }
+
+    /**
+    * POST
+    * /books/edit
+    * 
+    */
+    public function saveEdits(Request $request) {
+
+        # Validate the request data
+        $this->validate($request, [
+            'title' => 'required|min:3',
+            'published' => 'required|numeric',
+            'cover' => 'required|url',
+            'purchase_link' => 'required|url',
+        ]);
+
+        $book = Book::find($request->id);
+
+        $book->title = $request->title;
+        $book->published = $request->published;
+        $book->cover = $request->cover;
+        $book->purchase_link = $request->purchase_link;
+        $book->save();
+
+        Session::flash('message', 'your changes were saved');
+        return redirect('/books/edit/'.$request->id);
+
+    }
+
+    /**
+    * POST
+    * /books/delete/{id}
+    * 
+    */
+    public function delete($id) {
+
+        $book = Book::find($id);
+
+        if(is_null($book)) {
+            Session::flash('message', 'Book not found');
+            return redirect('/books');
+        }
+
+        return view('books.delete')->with([
+            'id' => $id,
+            'book' => $book,
+        ]);
+
+    }
+
+
+    /**
+    * POST
+    * /books/delete/
+    * 
+    */
+    public function deleteBook(Request $request) {
+
+        $book = Book::find($request->id);
+
+        $book->delete();
+
+        Session::flash('message', 'your book has been deleted');
+        return redirect('/books');
+
     }
 
 }

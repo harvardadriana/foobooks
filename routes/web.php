@@ -65,10 +65,18 @@ Route::get('/books', 'BookController@index');
 Route::get('/books/new', 'BookController@createNewBook');
 Route::post('/books/new', 'BookController@storeNewBook');
 
+# edit.blade.php
+Route::get('/books/edit/{id}', 'BookController@edit');
+Route::post('/books/edit', 'BookController@saveEdits');
 
+# delete.blade.php
+Route::get('/books/delete/{id}', 'BookController@delete');
+Route::post('/books/delete', 'BookController@deleteBook');
 
+# display book
 Route::get('/books/{title?}', 'BookController@show');
 
+# search book
 Route::get('/search', 'BookController@search');
 
 
@@ -89,4 +97,4 @@ Route::any('/practice/{n?}', 'PracticeController@index');
 /** Main Homepage
  * foobooks/
  */
-Route::get('/', 'WelcomeController');
+Route::get('/', 'BookController@index');
